@@ -30,7 +30,7 @@ public class Main {
     private static void requestUserName() {
         String option = JOptionPane.showInputDialog(null, "Username: ", "Soosweeper", JOptionPane.QUESTION_MESSAGE);
         if (option == null) return;
-        if (!option.isEmpty() && !option.contains(" ")) userName = option;
+        if (!option.isEmpty()) userName = option;
         else requestUserName();
     }
 
@@ -48,7 +48,14 @@ public class Main {
         int option = JOptionPane.showConfirmDialog(null, options, "Game Over", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.CANCEL_OPTION) System.exit(0);
 
-        fields.init((Integer)s2.getValue(), (Integer)s1.getValue(), (Integer)s3.getValue());
+        int cols = (Integer)s1.getValue();
+        int rows = (Integer)s2.getValue();
+        int mines = (Integer)s3.getValue();
+        if (mines >= cols*rows) {
+            JOptionPane.showMessageDialog(null, "Zu viele Minen!");
+            gameOver();
+        }
+        fields.init(rows, cols, mines);
 }
 
 }

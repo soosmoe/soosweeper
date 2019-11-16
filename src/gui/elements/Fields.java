@@ -35,14 +35,19 @@ public class Fields extends Element {
             fields.add(new Field(i, j));
         }
 
+        ArrayList<Double> availableIndices = new ArrayList<>();
+        for (int i = 0; i < fields.size(); i++) {
+            availableIndices.add((double)i);
+        }
+
         while (mines > 0) {
-            int i = Maths.randomInt(0, cols-1);
-            int j = Maths.randomInt(0, rows-1);
-            Field field = getField(i, j);
-            if (!field.getMine()) {
-                field.setMine(true);
-                mines--;
-            }
+            double index = availableIndices.get(Maths.randomInt(0, availableIndices.size()-1));
+            //System.out.println("index: " + index);
+            System.out.println(availableIndices.size());
+            Field field = fields.get((int)index);
+            field.setMine(true);
+            mines--;
+            availableIndices.remove(index);
         }
     }
 
