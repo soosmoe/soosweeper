@@ -4,6 +4,7 @@ import gui.GUI;
 import gui.general.Colors;
 import gui.general.Maths;
 import gui.general.Strokes;
+import main.Main;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -45,6 +46,9 @@ public class Fields extends Element {
             //System.out.println("index: " + index);
             System.out.println(availableIndices.size());
             Field field = fields.get((int)index);
+            //System.out.println(field.getI());
+            //System.out.println(field.getJ());
+            Main.getConnecter().write("Bombs", field.getI() + ", " + field.getJ());
             field.setMine(true);
             mines--;
             availableIndices.remove(index);

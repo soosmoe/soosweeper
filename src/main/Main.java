@@ -11,20 +11,27 @@ public class Main {
 
     private static String userName;
     private static Panel panel;
+    private static Connecter c = new Connecter("jdbc:mysql://mysql01.manitu.net","u38937", "V2ZDudBWdT69");
 
     public static void main(String[] args) {
+        c.delete("Bombs");
+        c.delete("Moves");
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Connecter c = new Connecter("jdbc:mysql://mysql01.manitu.net","u38937", "V2ZDudBWdT69");
+        //Connecter c = new Connecter("jdbc:mysql://mysql01.manitu.net","u38937", "V2ZDudBWdT69");
 
         requestUserName();
         if (userName == null) return;
         panel = new Panel();
         panel.start();
+    }
+
+    public static Connecter getConnecter() {
+        return c;
     }
 
     private static void requestUserName() {
@@ -55,6 +62,8 @@ public class Main {
             JOptionPane.showMessageDialog(null, "Zu viele Minen!");
             gameOver();
         }
+        getConnecter().delete("Bombs");
+        getConnecter().delete("Moves");
         fields.init(rows, cols, mines);
 }
 
