@@ -1,27 +1,23 @@
 package gui.elements;
 
-import gui.GUI;
-
 import java.awt.*;
 import java.util.ArrayList;
 
 public class Elements {
 
-    private ArrayList<Element> elements = new ArrayList<>();
+    private static ArrayList<Element> elements = new ArrayList<>();
+    private static Fields fields;
 
-    private Fields fields;
-
-    public Elements() {
+    static {
         elements.add(fields = new Fields());
     }
 
-    public void display(Graphics2D g) {
-        boolean largerWidth = GUI.width > GUI.height;
-        int fieldsSize = largerWidth ? GUI.height : GUI.width;
-        fields.setPos(largerWidth ? GUI.width/2d-fieldsSize/2d : 0, largerWidth ? 0 : GUI.height/2d-fieldsSize/2d);
-        fields.setDim(fieldsSize, fieldsSize);
-
+    public static void display(Graphics2D g) {
         for (Element e : elements) e.display(g);
+    }
+
+    public static Fields getFields() {
+        return fields;
     }
 
 }

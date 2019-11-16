@@ -18,7 +18,7 @@ public class Element {
     }
 
     protected final boolean click() {
-        return hover() && GUI.mouseClickCount == 1 && GUI.mouseButton == 1;
+        return hover() && GUI.mouseClickCount == 1;
     }
 
     public void onHover() {}

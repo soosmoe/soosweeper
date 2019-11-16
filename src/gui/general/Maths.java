@@ -10,4 +10,8 @@ public class Maths {
         return min + (int)(Math.random() * ((max - min) + 1));
     }
 
+    public static double bound(double value, double min, double max) {
+        return value < min ? min : value > max ? max : value;
+    }
+
 }

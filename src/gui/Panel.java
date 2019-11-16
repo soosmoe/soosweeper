@@ -8,11 +8,9 @@ import java.awt.*;
 public class Panel extends JPanel {
 
     private Frame frame;
-    private Elements elements;
 
     public Panel() {
         frame = new Frame(this);
-        elements = new Elements();
     }
 
     @Override
@@ -27,7 +25,7 @@ public class Panel extends JPanel {
         g.setBackground(Color.lightGray);
         g.clearRect(0, 0, GUI.width, GUI.height);
 
-        if (elements != null) elements.display(g);
+        Elements.display(g);
     }
 
     public void start() {
@@ -39,6 +37,8 @@ public class Panel extends JPanel {
             repaint();
             if (GUI.mousePressed) GUI.mouseClickCount++;
             GUI.frameCount++;
+            GUI.mouseScroll *= 0.75;
+            if (Math.abs(GUI.mouseScroll) < 0.001) GUI.mouseScroll = 0;
 
             if (!frame.isFocused()) {
                 GUI.mousePressed = false;

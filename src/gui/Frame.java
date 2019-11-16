@@ -55,6 +55,13 @@ public class Frame extends JFrame {
             }
         });
 
+        addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                GUI.mouseScroll += e.getUnitsToScroll();
+            }
+        });
+
         addMouseMotionListener(new MouseMotionListener() {
             private void updateMouseVariables() {
                 GUI.mouseX = MouseInfo.getPointerInfo().getLocation().getX()-GUI.displayX;

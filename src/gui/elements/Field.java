@@ -1,5 +1,6 @@
 package gui.elements;
 
+import gui.GUI;
 import gui.general.Colors;
 import gui.general.Maths;
 import gui.general.Strokes;
@@ -7,16 +8,25 @@ import gui.general.Strokes;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 
 public class Field extends Element {
 
     private int i, j;
-    private boolean mine, open;
+    private boolean mine, open, flag;
 
+    //Field
     private Rectangle2D.Double rect = new Rectangle2D.Double();
+    private Line2D.Double highlightLine = new Line2D.Double();
+
+    //Mine
     private Ellipse2D.Double ellipse = new Ellipse2D.Double();
     private Line2D.Double[] lines = new Line2D.Double[4];
+
+    //Flag
+    private Path2D.Double path = new Path2D.Double();
+    private Line2D.Double flagLine = new Line2D.Double();
 
     public Field(int i, int j) {
         this.i = i;
@@ -26,7 +36,8 @@ public class Field extends Element {
 
     @Override
     public void onClick() {
-        open = true;
+        if (GUI.mouseButton == 1 && Elements.getFields().getHoverField() == this) open = true;
+        if (GUI.mouseButton == 3) flag = !flag;
     }
 
     public int getI() {
@@ -59,16 +70,40 @@ public class Field extends Element {
         rect.setRect(x, y, w, h);
         g.setColor(open ? Colors.FIELD_OPEN : Colors.FIELD_CLOSE);
         g.fill(rect);
-        if (hover()) {
+        if (!open) {
+            g.setStroke(Strokes.BORDER);
+            g.setColor(Colors.FIELD_CLOSE.brighter());
+            highlightLine.setLine(x + 2, y + 2, x + w - 2, y + 2);
+            g.draw(highlightLine);
+            highlightLine.setLine(x + 2, y + 2, x + 2, y + h - 2);
+            g.draw(highlightLine);
+            if (flag) {
+                path.reset();
+                path.moveTo(x+w*.45, y+h*.25);
+                path.lineTo(x+w*.7, y+h*.375);
+                path.lineTo(x+w*.45, y+h*.5);
+                path.lineTo(x+w*.45, y+h*.25);
+                g.setColor(Colors.FLAG);
+                g.fill(path);
+                g.setColor(Colors.MINE);
+                g.setStroke(new BasicStroke((int)Math.round(w*.05), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                g.draw(path);
+                flagLine.setLine(x+w*.45, y+h*.25, x+w*.45, y+h*.75);
+                g.draw(flagLine);
+                flagLine.setLine(x+w*.3, y+h*.75, x+w*.7, y+h*.75);
+                g.draw(flagLine);
+            }
+        }
+        if (Elements.getFields().getHoverField() == this) {
             g.setColor(Colors.HOVER);
             g.fill(rect);
         }
         if (open && mine) {
-            double radius = w*.33333;
+            double radius = w*.3;
             ellipse.setFrame(x+w/2-radius, y+h/2-radius, radius*2, radius*2);
             g.setColor(Colors.MINE);
             g.fill(ellipse);
-            g.setStroke(Strokes.MINE);
+            g.setStroke(new BasicStroke((int)Math.round(radius/3d), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             for (int i = 0; i < lines.length; i++) {
                 Line2D.Double line = lines[i];
                 double rotation = Maths.map(i, 0, lines.length, 0, Math.PI);
@@ -80,8 +115,5 @@ public class Field extends Element {
                 g.draw(line);
             }
         }
-        g.setColor(Colors.BORDER);
-        g.setStroke(Strokes.BORDER);
-        g.draw(rect);
     }
 }
