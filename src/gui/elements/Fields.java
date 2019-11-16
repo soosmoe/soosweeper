@@ -29,7 +29,7 @@ public class Fields extends Element {
         h = rows * scale;
         fields.clear();
 
-        for (int i = 0; i < cols; i++) for (int j = 0; j < rows; j++) {
+        for (int j = 0; j < rows; j++) for (int i = 0; i < cols; i++) {
             fields.add(new Field(i, j));
         }
 
@@ -72,7 +72,8 @@ public class Fields extends Element {
     }
 
     public Field getField(int i, int j) {
-        return fields.get(j*rows+i);
+        if (i < 0 || i >= cols || j < 0 || j >= rows) return null;
+        return fields.get(j*cols+i);
     }
 
     public Field getHoverField() {

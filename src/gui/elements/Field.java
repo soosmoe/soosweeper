@@ -2,8 +2,10 @@ package gui.elements;
 
 import gui.GUI;
 import gui.general.Colors;
+import gui.general.Fonts;
 import gui.general.Maths;
 import gui.general.Strokes;
+import main.Main;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -15,6 +17,7 @@ public class Field extends Element {
 
     private int i, j;
     private boolean mine, open, flag;
+    private int mines;
 
     //Field
     private Rectangle2D.Double rect = new Rectangle2D.Double();
@@ -36,9 +39,11 @@ public class Field extends Element {
 
     @Override
     public void onClick() {
-        if (GUI.mouseButton == 1 && Elements.getFields().getHoverField() == this) open = true;
+        if (GUI.mouseButton == 1 && Elements.getFields().getHoverField() == this) open();
         if (GUI.mouseButton == 3) flag = !flag;
     }
+
+
 
     public int getI() {
         return i;
@@ -60,8 +65,33 @@ public class Field extends Element {
         return open;
     }
 
-    public void setOpen(boolean open) {
-        this.open = open;
+    public void open() {
+        if (open) return;
+        open = true;
+        mines = getMines();
+        if (!mine) {
+            openNext(i-1, j);
+            openNext(i+1, j);
+            openNext(i, j-1);
+            openNext(i, j+1);
+        }
+    }
+
+    private void openNext(int I, int J) {
+        Field field = Elements.getFields().getField(I, J);
+        if (field != null) {
+            if (!field.getMine()) field.open();
+        }
+    }
+
+    private int getMines() {
+        int mines = 0;
+        for (int X = -1; X <= 1; X++) for (int Y = -1; Y <= 1; Y++) {
+            Field field = Elements.getFields().getField(i+X, j+Y);
+            if (field == null) continue;
+            if (field.getMine()) mines++;
+        }
+        return mines;
     }
 
     @Override
@@ -115,5 +145,16 @@ public class Field extends Element {
                 g.draw(line);
             }
         }
+        if (open && !mine && mines > 0) {
+            float fontSize = (float)(w/1.5d);
+            g.setFont(Fonts.DEFAULT.deriveFont(fontSize));
+            g.setColor(Colors.BORDER);
+            g.drawString("" + mines, (float)(x+w/2-g.getFontMetrics().stringWidth("" + mines)/2d)+fontSize*.05f,
+                    (float)(y+h-g.getFontMetrics().getHeight()*.3)+fontSize*.05f);
+            g.setColor(Colors.getNumberColor(mines));
+            g.drawString("" + mines, (float)(x+w/2-g.getFontMetrics().stringWidth("" + mines)/2d),
+                    (float)(y+h-g.getFontMetrics().getHeight()*.3));
+        }
     }
+
 }
