@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class Fields extends Element {
 
-    private int rows, cols;
+    private int rows, cols, mines;
     private ArrayList<Field> fields = new ArrayList<>();
     private Field hoverField;
     private double scale;
@@ -23,11 +23,13 @@ public class Fields extends Element {
     }
 
     public void init(int rows, int cols, int mines) {
+        fields.clear();
+        hoverField = null;
         this.rows = rows;
         this.cols = cols;
+        this.mines = mines;
         w = cols * scale;
         h = rows * scale;
-        fields.clear();
 
         for (int j = 0; j < rows; j++) for (int i = 0; i < cols; i++) {
             fields.add(new Field(i, j));
@@ -52,8 +54,10 @@ public class Fields extends Element {
         h = 40*scale*rows;
         setPos(GUI.width/2d-w/2d, GUI.height/2d-h/2d);
         super.display(g);
+        if (!hover()) hoverField = null;
         for (Field field : fields) if (field.hover()) hoverField = field;
-        for (Field field : fields) {
+        for (int i = fields.size()-1; i >= 0; i--) {
+            Field field = fields.get(i);
             field.setPos(x+field.getI()*(w/cols), y+field.getJ()*(h/rows));
             field.setDim(w/cols, h/rows);
             field.display(g);
@@ -78,6 +82,18 @@ public class Fields extends Element {
 
     public Field getHoverField() {
         return hoverField;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+
+    public int getMines() {
+        return mines;
     }
 
 }

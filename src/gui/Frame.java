@@ -1,5 +1,7 @@
 package gui;
 
+import main.Main;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,7 +11,7 @@ public class Frame extends JFrame {
     private String osName = System.getProperty("os.name").toLowerCase();
     
     public Frame(Panel panel) {
-        super("Soosweeper");
+        super("Soosweeper " + Main.getUserName());
         System.setProperty("apple.awt.application.name", getName());
 
         setResizable(true);

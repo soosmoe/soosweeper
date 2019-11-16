@@ -2,21 +2,53 @@ package main;
 
 import conn.Connecter;
 import gui.Panel;
+import gui.elements.Elements;
+import gui.elements.Fields;
 
-import javax.sql.DataSource;
-import java.sql.*;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import javax.swing.*;
 
 public class Main {
 
-    public static void main(String[] args){
-        new Panel().start();
-        //Connecter c = new Connecter("jdbc:mysql://mysql01.manitu.net","u38937", "V2ZDudBWdT69");
-        //System.out.println(c.read("Bombs", 2));
-        //System.out.println("soos");
-        //c.delete("Bombs");
-        //System.out.println("soos");
-        //c.write("Bombs", "Row, Column", "' 5 ' , '5' ");
+    private static String userName;
+    private static Panel panel;
+
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Connecter c = new Connecter("jdbc:mysql://mysql01.manitu.net","u38937", "V2ZDudBWdT69");
+
+        requestUserName();
+        if (userName == null) return;
+        panel = new Panel();
+        panel.start();
     }
+
+    private static void requestUserName() {
+        String option = JOptionPane.showInputDialog(null, "Username: ", "Soosweeper", JOptionPane.QUESTION_MESSAGE);
+        if (option == null) return;
+        if (!option.isEmpty() && !option.contains(" ")) userName = option;
+        else requestUserName();
+    }
+
+    public static String getUserName() {
+        return userName;
+    }
+
+    public static void gameOver() {
+        Fields fields = Elements.getFields();
+        JSpinner s1 = new JSpinner(new SpinnerNumberModel(fields.getCols(), 1, 420, 1));
+        JSpinner s2 = new JSpinner(new SpinnerNumberModel(fields.getRows(), 1, 420, 1));
+        JSpinner s3 = new JSpinner(new SpinnerNumberModel(fields.getMines(), 0, 176400, 1));
+        Object[] options = {"Breite: ", s1, "Höhe: ", s2, "Minen: ", s3};
+
+        int option = JOptionPane.showConfirmDialog(null, options, "Game Over", JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.CANCEL_OPTION) System.exit(0);
+
+        fields.init((Integer)s2.getValue(), (Integer)s1.getValue(), (Integer)s3.getValue());
+}
+
 }

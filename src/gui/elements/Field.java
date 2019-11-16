@@ -39,7 +39,10 @@ public class Field extends Element {
 
     @Override
     public void onClick() {
-        if (GUI.mouseButton == 1 && Elements.getFields().getHoverField() == this) open();
+        if (GUI.mouseButton == 1 && Elements.getFields().getHoverField() == this) {
+            if (mine) Main.gameOver();
+            open();
+        }
         if (GUI.mouseButton == 3) flag = !flag;
     }
 
