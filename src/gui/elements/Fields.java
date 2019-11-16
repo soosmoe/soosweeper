@@ -9,6 +9,7 @@ import main.Main;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Fields extends Element {
 
@@ -22,7 +23,31 @@ public class Fields extends Element {
     public Fields() {
         init(10, 15, 30);
     }
+    public void init() {
+        List<String> s = Main.getConnecter().read("Moves", 5);
+        if(s.get(3) == "CREATED") {
+            fields.clear();
+            hoverField = null;
+            this.rows = Integer.parseInt(s.get(1));
+            this.cols = Integer.parseInt(s.get(2));
+            this.mines = Main.getConnecter().read("Bombs", 2).size();
+            w = cols * scale;
+            h = rows * scale;
 
+            for (int j = 0; j < rows; j++) for (int i = 0; i < cols; i++) {
+                fields.add(new Field(i, j));
+            }
+
+            List<String> b = Main.getConnecter().read("Bombs", 2);
+            for(int i =0; i<b.size()/2;i++) {
+                getField(Integer.parseInt(b.get(i*2)),Integer.parseInt(b.get(i*2+1))).setMine(true);
+            }
+
+
+        }   else {
+            init(15,10,30);
+        }
+    }
     public void init(int rows, int cols, int mines) {
         fields.clear();
         hoverField = null;
@@ -44,7 +69,7 @@ public class Fields extends Element {
         while (mines > 0) {
             double index = availableIndices.get(Maths.randomInt(0, availableIndices.size()-1));
             //System.out.println("index: " + index);
-            System.out.println(availableIndices.size());
+            //System.out.println(availableIndices.size());
             Field field = fields.get((int)index);
             //System.out.println(field.getI());
             //System.out.println(field.getJ());
