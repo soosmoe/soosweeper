@@ -15,18 +15,21 @@ public class Main {
 
     public static void main(String[] args) {
 
-        c.delete("Bombs");
-        c.delete("Moves");
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        //Connecter c = new Connecter("jdbc:mysql://mysql01.manitu.net","u38937", "V2ZDudBWdT69");
-
         requestUserName();
         if (userName == null) return;
+        if (JOptionPane.showConfirmDialog(null, "Neues Spiel?", "WARNING", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            c.delete("Bombs");
+            c.delete("Moves");
+            Elements.getFields().init(15, 10, 30);
+        } else {
+            Elements.getFields().init();
+        }
         panel = new Panel();
         panel.start();
     }

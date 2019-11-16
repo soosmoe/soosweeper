@@ -32,7 +32,7 @@ public class Connecter {
                     res.add((rs.getString(i)));
 
                 }
-                res.add("§");
+                //res.add("§");
             }
 
             return res;

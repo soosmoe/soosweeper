@@ -21,44 +21,42 @@ public class Fields extends Element {
     private Line2D.Double line = new Line2D.Double();
 
     public Fields() {
-        init(10, 15, 30);
+
     }
+
     public void init() {
-        List<String> s = Main.getConnecter().read("Moves", 5);
-        if(s.get(2) == "0") {
-            fields.clear();
-            hoverField = null;
-            this.rows = Integer.parseInt(s.get(0));
-            this.cols = Integer.parseInt(s.get(1));
-            this.mines = Main.getConnecter().read("Bombs", 2).size();
-            w = cols * scale;
-            h = rows * scale;
+        List<String> s = Main.getConnecter().read("Moves", 3);
+        fields.clear();
+        hoverField = null;
+        this.rows = Integer.parseInt(s.get(0));
+        this.cols = Integer.parseInt(s.get(1));
+        System.out.println(rows + "   " + cols);
+        this.mines = Main.getConnecter().read("Bombs", 2).size();
+        w = cols * scale;
+        h = rows * scale;
 
-            for (int j = 0; j < rows; j++) for (int i = 0; i < cols; i++) {
-                fields.add(new Field(i, j));
+        for (int j = 0; j < rows; j++) for (int i = 0; i < cols; i++) {
+            fields.add(new Field(i, j));
+        }
+
+        List<String> b = Main.getConnecter().read("Bombs", 2);
+        for (int i = 0; i < b.size()-1; i += 2) {
+            getField(Integer.parseInt(b.get(i)), Integer.parseInt(b.get(i+1))).setMine(true);
+        }
+
+        for (int i = 3; i < s.size()-2; i += 3) {
+            if (Integer.parseInt(s.get(i+2)) == 1) {
+                Field f = getField(Integer.parseInt(s.get(i)), Integer.parseInt(s.get(i+1)));
+                if (f.getMine()) Main.gameOver();
+                f.open();
             }
-
-            List<String> b = Main.getConnecter().read("Bombs", 2);
-            for(int i =0; i<b.size()/2;i++) {
-                getField(Integer.parseInt(b.get(i*2)),Integer.parseInt(b.get(i*2+1))).setMine(true);
+            if (Integer.parseInt(s.get(i+2)) == 3) {
+                Field f = getField(Integer.parseInt(s.get(i)), Integer.parseInt(s.get(i+1)));
+                f.setFlag(!f.getFlag());
             }
-            for(int i =0; i<s.size()/3;i++) {
-                if(Integer.parseInt(s.get(i*3+2))==1) {
-                    Field f = getField(i*3,i*3+1);
-                    if(f.getMine()) Main.gameOver();
-                    f.open();
-                }
-                if(Integer.parseInt(s.get(i*3+2))==3) {
-                    Field f = getField(i*3,i*3+1);
-                    f.setFlag(!f.getFlag());
-                }
-            }
-
-
-        }   else {
-            init(15,10,30);
         }
     }
+
     public void init(int rows, int cols, int mines) {
         fields.clear();
         hoverField = null;
@@ -68,30 +66,26 @@ public class Fields extends Element {
         w = cols * scale;
         h = rows * scale;
 
-        for (int j = 0; j < rows; j++)
-            for (int i = 0; i < cols; i++) {
-                fields.add(new Field(i, j));
-            }
+        for (int j = 0; j < rows; j++) for (int i = 0; i < cols; i++) {
+            fields.add(new Field(i, j));
+        }
 
         ArrayList<Double> availableIndices = new ArrayList<>();
         for (int i = 0; i < fields.size(); i++) {
             availableIndices.add((double) i);
         }
 
-            while (mines > 0) {
-                double index = availableIndices.get(Maths.randomInt(0, availableIndices.size() - 1));
-                //System.out.println("index: " + index);
-                //System.out.println(availableIndices.size());
-                Field field = fields.get((int) index);
-                //System.out.println(field.getI());
-                //System.out.println(field.getJ());
-                Main.getConnecter().write("Bombs", field.getI() + ", " + field.getJ());
-                field.setMine(true);
-                mines--;
-                availableIndices.remove(index);
-            }
+        while (mines > 0) {
+            double index = availableIndices.get(Maths.randomInt(0, availableIndices.size() - 1));
+            Field field = fields.get((int) index);
+            Main.getConnecter().write("Bombs", field.getI() + ", " + field.getJ());
+            field.setMine(true);
+            mines--;
+            availableIndices.remove(index);
         }
 
+        Main.getConnecter().write("Moves", rows + ", " + cols + ", 0");
+    }
 
     @Override
     public void display(Graphics2D g) {
@@ -102,6 +96,22 @@ public class Fields extends Element {
         setPos(GUI.width/2d-w/2d, GUI.height/2d-h/2d);
         super.display(g);
         if (!hover()) hoverField = null;
+
+        if (GUI.frameCount % 60 == 0) {
+            List<String> s = Main.getConnecter().read("Moves", 3);
+            for (int i = 3; i < s.size() - 2; i += 3) {
+                if (Integer.parseInt(s.get(i + 2)) == 1) {
+                    Field f = getField(Integer.parseInt(s.get(i)), Integer.parseInt(s.get(i + 1)));
+                    if (f.getMine()) Main.gameOver();
+                    f.open();
+                }
+                if (Integer.parseInt(s.get(i + 2)) == 3) {
+                    Field f = getField(Integer.parseInt(s.get(i)), Integer.parseInt(s.get(i + 1)));
+                    f.setFlag(!f.getFlag());
+                }
+            }
+        }
+
         for (Field field : fields) if (field.hover()) hoverField = field;
         for (int i = fields.size()-1; i >= 0; i--) {
             Field field = fields.get(i);
