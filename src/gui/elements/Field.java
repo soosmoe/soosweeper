@@ -69,11 +69,10 @@ public class Field extends Element {
         if (open) return;
         open = true;
         mines = getMines();
-        if (!mine) {
-            openNext(i-1, j);
-            openNext(i+1, j);
-            openNext(i, j-1);
-            openNext(i, j+1);
+        if (getMines() == 0) {
+            for (int X = -1; X <= 1; X++) for (int Y = -1; Y <= 1; Y++) {
+                openNext(i+X, j+Y);
+            }
         }
     }
 
