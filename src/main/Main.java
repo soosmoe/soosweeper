@@ -1,10 +1,11 @@
 package main;
 
+import gui.Panel;
+
 public class Main {
 
     public static void main(String[] args) {
-
-        System.out.println("nub");
+        new Panel().start();
     }
 
 }
