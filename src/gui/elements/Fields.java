@@ -17,6 +17,7 @@ public class Fields extends Element {
     private ArrayList<Field> fields = new ArrayList<>();
     private Field hoverField;
     private double scale;
+    private double xoff, yoff;
 
     private Line2D.Double line = new Line2D.Double();
 
@@ -30,7 +31,6 @@ public class Fields extends Element {
         hoverField = null;
         this.rows = Integer.parseInt(s.get(0));
         this.cols = Integer.parseInt(s.get(1));
-        System.out.println(rows + "   " + cols);
         this.mines = Main.getConnecter().read("Bombs", 2).size();
         w = cols * scale;
         h = rows * scale;
@@ -90,10 +90,14 @@ public class Fields extends Element {
     @Override
     public void display(Graphics2D g) {
         scale -= scale * GUI.mouseScroll/200d;
-        scale = Maths.bound(scale, 0.75, 1.5);
+        scale = Maths.bound(scale, 0.2, 2);
         w = 40*scale*cols;
         h = 40*scale*rows;
-        setPos(GUI.width/2d-w/2d, GUI.height/2d-h/2d);
+        if (GUI.mouseButton == 2 && GUI.mouseClickCount > 1) {
+            xoff -= 0.1 * (GUI.mouseX - GUI.width/2d);
+            yoff -= 0.1 * (GUI.mouseY - GUI.height/2d);
+        }
+        setPos(GUI.width/2d-w/2d+xoff, GUI.height/2d-h/2d+yoff);
         super.display(g);
         if (!hover()) hoverField = null;
 
