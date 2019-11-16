@@ -55,6 +55,7 @@ public class Connecter {
     public void write(String table, String val) {
         try {
             Statement stmt = con.createStatement();
+            System.out.println(val);
             stmt.execute("insert into db38937." + table +" values (" + val + ")");
         }catch (Exception e) {
             System.out.println(e);

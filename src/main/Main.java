@@ -14,6 +14,7 @@ public class Main {
     private static Connecter c = new Connecter("jdbc:mysql://mysql01.manitu.net","u38937", "V2ZDudBWdT69");
 
     public static void main(String[] args) {
+
         c.delete("Bombs");
         c.delete("Moves");
         try {

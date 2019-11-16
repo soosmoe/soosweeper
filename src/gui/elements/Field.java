@@ -39,11 +39,16 @@ public class Field extends Element {
 
     @Override
     public void onClick() {
-        if (GUI.mouseButton == 1 && Elements.getFields().getHoverField() == this) {
+        if(Elements.getFields().getHoverField() != this) return;
+        if (GUI.mouseButton == 1) {
+            Main.getConnecter().write("Moves", getI() + ", " + getJ() + ", 1");
             if (mine) Main.gameOver();
             open();
         }
-        if (GUI.mouseButton == 3) flag = !flag;
+        if (GUI.mouseButton == 3) {
+            Main.getConnecter().write("Moves", getI() + ", " + getJ() + ", 3");
+            flag = !flag;
+        }
     }
 
 
@@ -66,6 +71,12 @@ public class Field extends Element {
 
     public boolean getOpen() {
         return open;
+    }
+
+    public boolean getFlag() {return flag;}
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
     }
 
     public void open() {
