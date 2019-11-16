@@ -27,7 +27,6 @@ public class Connecter {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("select * from db38937." + table);
             List<String> res = new ArrayList<String>();
-            System.out.println("fine");
             while (rs.next()) {
                 for (int i = 1; i < values + 1; i++) {
                     res.add((rs.getString(i)));
