@@ -1,5 +1,6 @@
 package gui;
 
+import conn.Connector;
 import util.Colors;
 import util.Fonts;
 import util.Maths;
@@ -101,6 +102,7 @@ public class Render {
                     }
                     if (GUI.mouseButton == 3) {
                         field.setFlag(board.getWidth(), !field.getFlag());
+                        Connector.update("Fields", (int)(y*board.getWidth()+x), "FlagState", !field.getFlag());
                     }
                 }
             }
