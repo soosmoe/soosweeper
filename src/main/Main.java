@@ -7,6 +7,7 @@ import javax.swing.*;
 public class Main {
 
     private static Panel panel;
+    public static final String username = "ratschkopf";
 
     public static void main(String[] args) {
         try {

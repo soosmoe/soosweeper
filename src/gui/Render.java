@@ -10,6 +10,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 public class Render {
 
@@ -102,11 +103,28 @@ public class Render {
                     }
                     if (GUI.mouseButton == 3) {
                         field.setFlag(board.getWidth(), !field.getFlag());
-                        Connector.update("Fields", (int)(y*board.getWidth()+x), "FlagState", !field.getFlag());
+                        Connector.update("Fields", field.getY()*board.getWidth()+field.getX(), "FlagState", !field.getFlag());
                     }
+                    Connector.insert("ToDo", 0 /*CHANGE HERE*/, field.getY()*board.getWidth()+field.getX());
                 }
             }
         }
+
+        //work through to do's
+        ArrayList<String> strings = Connector.read("ToDo");
+        if (strings != null && strings.size() > 0) {
+            for (int i = 0; i < strings.size() - 1; i += 2) {
+                if (Integer.parseInt(strings.get(i)) == 1 /*CHANGE HERE*/) {
+                    int index = Integer.parseInt(strings.get(i+1));
+                    Field toDoField = board.getFields().get(index);
+                    int J = index - (index%board.getWidth());
+                    Field newField = Connector.readField(board.getWidth(), (index-J)/board.getWidth(), J);
+                    if (newField.getOpen()) toDoField.open(board.getWidth(), true);
+                    if (newField.getFlag()) toDoField.setFlag(board.getWidth(), !toDoField.getFlag());
+                }
+            }
+        }
+
         //grid
         g.setStroke(defaultStroke);
         g.setColor(Colors.BORDER);

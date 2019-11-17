@@ -66,12 +66,12 @@ public class Connector {
         return null;
     }
 
-    public static void insert(String table, int... values) {
+    public static void insert(String table, Object... values) {
         try {
             StringBuilder builder = new StringBuilder("insert into ").append(dbName).append(".").append(table);
             builder.append(" values (");
             for (int i = 0; i < values.length; i++) {
-                builder.append(values[i]);
+                builder.append(values[i].toString());
                 if (i < values.length-1) builder.append(", ");
             }
             builder.append(")");
