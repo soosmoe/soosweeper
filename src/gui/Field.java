@@ -16,13 +16,15 @@ public class Field {
 
     public void open(int width, boolean byPlayer) {
         open = true;
-        if (byPlayer) Connector.update("Fields", y*width+x, "OpenState", true);
+        Connector.update("Fields", y*width+x, "OpenState", true);
 
         mines = countSurroundingMines();
-        if (mines == 0 && byPlayer) {
+        if (mines == 0) {
             for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) {
                 Field field = Main.getPanel().getBoard().getField(x+i, y+j);
-                if (field != null) if (!field.getMine()) field.open(width, byPlayer);
+                if (field != null) if (!field.getMine()) {
+                    if(!field.open) field.open(width, byPlayer);
+                }
             }
         }
     }
