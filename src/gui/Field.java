@@ -14,14 +14,15 @@ public class Field {
         this.y = y;
     }
 
-    public void open(int width) {
+    public void open(int width, boolean byPlayer) {
         open = true;
-        Connector.update("Fields", y*width+x, "OpenState", true);
+        if (byPlayer) Connector.update("Fields", y*width+x, "OpenState", true);
+
         mines = countSurroundingMines();
-        if (mines == 0) {
+        if (mines == 0 && byPlayer) {
             for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) {
                 Field field = Main.getPanel().getBoard().getField(x+i, y+j);
-                if (field != null) if (!field.getMine()) field.open(width);
+                if (field != null) if (!field.getMine()) field.open(width, byPlayer);
             }
         }
     }

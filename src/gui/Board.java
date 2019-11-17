@@ -50,7 +50,7 @@ public class Board {
         }
 
         for (Field field : fields) {
-            if (field.getOpen()) field.open(width);
+            if (field.getOpen()) field.open(width, false);
         }
     }
 

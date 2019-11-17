@@ -97,7 +97,7 @@ public class Render {
                 g.fill(rect);
                 if (GUI.mouseClickCount == 1) {
                     if (GUI.mouseButton == 1 && !field.getFlag()) {
-                        field.open(board.getWidth());
+                        field.open(board.getWidth(), true);
                     }
                     if (GUI.mouseButton == 3) {
                         field.setFlag(board.getWidth(), !field.getFlag());
