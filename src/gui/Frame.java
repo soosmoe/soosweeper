@@ -1,7 +1,5 @@
 package gui;
 
-import main.Main;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,9 +7,9 @@ import java.awt.event.*;
 public class Frame extends JFrame {
 
     private String osName = System.getProperty("os.name").toLowerCase();
-    
+
     public Frame(Panel panel) {
-        super("Soosweeper " + Main.getUserName());
+        super("Soosweeper");
         System.setProperty("apple.awt.application.name", getName());
 
         setResizable(true);
@@ -78,6 +76,27 @@ public class Frame extends JFrame {
             @Override
             public void mouseMoved(MouseEvent e) {
                 updateMouseVariables();
+            }
+        });
+
+        addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                GUI.keyPressed = true;
+                GUI.key = e.getKeyChar();
+                GUI.keyCode = e.getKeyCode();
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                GUI.keyPressed = false;
+                GUI.key = e.getKeyChar();
+                GUI.keyCode = e.getKeyCode();
             }
         });
 

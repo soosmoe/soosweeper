@@ -15,4 +15,9 @@ public class GUI {
     public static double mouseScroll;
     public static long mouseClickCount;
 
+    //Keyboard
+    public static boolean keyPressed;
+    public static char key;
+    public static int keyCode;
+
 }

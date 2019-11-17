@@ -1,4 +1,4 @@
-package gui.general;
+package util;
 
 public class Maths {
 
