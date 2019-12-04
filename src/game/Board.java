@@ -16,6 +16,7 @@ public class Board {
         this.mines = mines;
         this.con = new Connection();
         //Prepare fields
+        /*
         fields.clear();
         con.clear();
         for (int y = 0; y < height; y++) for (int x = 0; x < width; x++) {
@@ -32,7 +33,8 @@ public class Board {
             fields.get(index).setMine(true);
             indices.remove(random);
             con.setMine(fields.get(index));
-        }
+        }*/
+        load();
 
     }
 
@@ -62,7 +64,7 @@ public class Board {
 
     public Field getField(int x, int y) {
         int index = y * width + x;
-        if (index >= width * height || index < 0) return null;
+        if (index >= width * height || index < 0||index >= fields.size()) return null;
         return fields.get(index);
     }
 
