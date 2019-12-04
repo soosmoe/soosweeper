@@ -11,7 +11,6 @@ public class Frame extends JFrame {
     public Frame(Panel panel) {
         super("Soosweeper");
         System.setProperty("apple.awt.application.name", getName());
-
         setResizable(true);
         setSize(GUI.width, GUI.height);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

@@ -1,6 +1,7 @@
 package gui;
 
-import conn.Connector;
+import game.Board;
+import game.Field;
 import util.Colors;
 import util.Fonts;
 import util.Maths;
@@ -10,36 +11,63 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 
 public class Render {
 
-    private BasicStroke defaultStroke = new BasicStroke(1);
+    private Board board;
+
+    private double previousMouseX, previousMouseY;
+    private double scale, xOff, yOff;
+
+    private BasicStroke stroke = new BasicStroke(1);
     private Rectangle2D.Double rect = new Rectangle2D.Double();
     private Ellipse2D.Double ellipse = new Ellipse2D.Double();
     private Path2D.Double path = new Path2D.Double();
     private Line2D.Double line = new Line2D.Double();
 
-    public void board(Graphics2D g, Board board, double xoff, double yoff, double scale) {
+    public Render(Board board) {
+        this.board = board;
+        scale = 40;
+        xOff = GUI.width / 2d - board.getWidth() * scale / 2d;
+        yOff = GUI.height / 2d - board.getHeight() * scale / 2d;
+    }
+
+    public void update() {
+        //System.out.println(xOff + " " + yOff);
+        if (GUI.mousePressed && GUI.mouseButton == 2) {
+            xOff += GUI.mouseX - previousMouseX;
+            yOff += GUI.mouseY - previousMouseY;
+        }
+        if (GUI.keyPressed && GUI.key == ' ') {
+            xOff = GUI.width / 2d - board.getWidth() * scale / 2d;
+            yOff = GUI.height / 2d - board.getHeight() * scale / 2d;
+        }
+        scale = Maths.bound(scale - scale * GUI.mouseScroll * 0.005, 4, 80);
+
+        previousMouseX = GUI.mouseX;
+        previousMouseY = GUI.mouseY;
+    }
+
+    public void board(Graphics2D g) {
+        //Use mouse coordinates to find hover field
         Field hoverField = null;
-        for (Field field : board.getFields()) {
-            double x = field.getX()*scale+xoff;
-            double y = field.getY()*scale+yoff;
-            if (GUI.mouseX >= x && GUI.mouseX <= x+scale && GUI.mouseY >= y && GUI.mouseY <= y+scale) {
-                hoverField = field;
+        for (int x = 0; x < board.getWidth(); x++) for (int y = 0; y < board.getHeight(); y++) {
+            double X = x * scale + xOff;
+            double Y = y * scale + yOff;
+            if (GUI.mouseX >= X && GUI.mouseX <= X + scale && GUI.mouseY >= Y && GUI.mouseY <= Y + scale) {
+                hoverField = board.getField(x, y);
             }
         }
 
         BasicStroke mineStroke = new BasicStroke((int)Math.round(scale*.1), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-        g.setStroke(defaultStroke);
+        g.setStroke(stroke);
         g.setFont(Fonts.DEFAULT.deriveFont((float)scale*.8f));
 
-        for (int i = 0; i < board.getWidth(); i++) for (int j = 0; j < board.getHeight(); j++) {
-            Field field = board.getField(i, j);
-            double x = i*scale+xoff;
-            double y = j*scale+yoff;
-            rect.setRect(x, y, scale, scale);
-            boolean hover = field == hoverField;
+        for (int x = 0; x < board.getWidth(); x++) for (int y = 0; y < board.getHeight(); y++) {
+            double X = x * scale + xOff;
+            double Y = y * scale + yOff;
+            Field field = board.getField(x, y);
+            rect.setRect(X, Y, scale, scale);
 
             if (field.getOpen()) {
                 //field open
@@ -48,95 +76,82 @@ public class Render {
                 if (field.getMine()) {
                     //mine circle
                     g.setColor(Colors.MINE);
-                    ellipse.setFrame(x+scale*.25, y+scale*.25, scale*.5, scale*.5);
+                    ellipse.setFrame(X+scale*.25, Y+scale*.25, scale*.5, scale*.5);
                     g.fill(ellipse);
                     g.setStroke(mineStroke);
                     //mine spikes
-                    for (int I = 0, numOfLines = 4; I < numOfLines; I++) {
+                    for (int i = 0, numOfLines = 4; i < numOfLines; i++) {
                         double r = scale*.275;
-                        double rot = Maths.map(I, 0, numOfLines, 0, Math.PI);
-                        line.setLine(x+scale/2+Math.sin(rot)*r, y+scale/2+Math.cos(rot)*r,
-                                     x+scale/2+Math.sin(rot+Math.PI)*r, y+scale/2+Math.cos(rot+Math.PI)*r);
+                        double rot = Maths.map(i, 0, numOfLines, 0, Math.PI);
+                        line.setLine(X+scale/2+Math.sin(rot)*r, Y+scale/2+Math.cos(rot)*r,
+                                X+scale/2+Math.sin(rot+Math.PI)*r, Y+scale/2+Math.cos(rot+Math.PI)*r);
                         g.draw(line);
                     }
                 } else if (field.getMines() > 0) {
-                    //neighbor mine count number
+                    //number of surrounding mines
                     g.setColor(Colors.getNumberColor(field.getMines()));
                     String n = "" + field.getMines();
-                    g.drawString(n, (float)(x+scale*.5f-g.getFontMetrics().stringWidth(n)*.5f),
-                            (float)(y+scale-g.getFontMetrics().getHeight()*.2f));
+                    g.drawString(n, (float)(X+scale*.5f-g.getFontMetrics().stringWidth(n)*.5f),
+                            (float)(Y+scale-g.getFontMetrics().getHeight()*.2f));
                 }
             } else {
                 //field close
-                g.setStroke(defaultStroke);
+                g.setStroke(stroke);
                 g.setColor(Colors.FIELD_CLOSE);
                 g.fill(rect);
                 g.setColor(Colors.FIELD_CLOSE.brighter());
-                line.setLine(x+2, y+2, x+scale-2, y+2);
+                line.setLine(X+2, Y+2, X+scale-2, Y+2);
                 g.draw(line);
-                line.setLine(x+2, y+2, x+2, y+scale-2);
+                line.setLine(X+2, Y+2, X+2, Y+scale-2);
                 g.draw(line);
                 if (field.getFlag()) {
-                    //Flag
+                    //flag
                     path.reset();
-                    path.moveTo(x+scale*.45, y+scale*.25);
-                    path.lineTo(x+scale*.7, y+scale*.375);
-                    path.lineTo(x+scale*.45, y+scale*.5);
-                    path.lineTo(x+scale*.45, y+scale*.25);
+                    path.moveTo(X+scale*.45, Y+scale*.25);
+                    path.lineTo(X+scale*.7, Y+scale*.375);
+                    path.lineTo(X+scale*.45, Y+scale*.5);
+                    path.lineTo(X+scale*.45, Y+scale*.25);
                     g.setColor(Colors.FLAG);
                     g.fill(path);
                     g.setColor(Color.black);
                     g.draw(path);
-                    line.setLine(x+scale*.45, y+scale*.25, x+scale*.45, y+scale*.75);
+                    line.setLine(X+scale*.45, Y+scale*.25, X+scale*.45, Y+scale*.75);
                     g.draw(line);
-                    line.setLine(x+scale*.3, y+scale*.75, x+scale*.7, y+scale*.75);
+                    line.setLine(X+scale*.3, Y+scale*.75, X+scale*.7, Y+scale*.75);
                     g.draw(line);
                 }
             }
-            if (hover) {
-                rect.setRect(x, y, scale, scale);
+            if (field == hoverField) {
+                //field hover highlight
+                rect.setRect(X, Y, scale, scale);
                 g.setColor(Colors.HOVER);
                 g.fill(rect);
+                //mouse interaction
                 if (GUI.mouseClickCount == 1) {
+                    //left click
                     if (GUI.mouseButton == 1 && !field.getFlag()) {
-                        field.open(board.getWidth(), true);
+                        field.open();
                     }
+                    //right click
                     if (GUI.mouseButton == 3) {
-                        field.setFlag(board.getWidth(), !field.getFlag());
-                        Connector.update("Fields", field.getY()*board.getWidth()+field.getX(), "FlagState", !field.getFlag());
+                        field.setFlag(!field.getFlag());
                     }
-                    Connector.insert("ToDo", 0 /*CHANGE HERE*/, field.getY()*board.getWidth()+field.getX());
                 }
             }
         }
-
-        //work through to do's
-        ArrayList<String> strings = Connector.read("ToDo");
-        if (strings != null && strings.size() > 0) {
-            for (int i = 0; i < strings.size() - 1; i += 2) {
-                if (Integer.parseInt(strings.get(i)) == 1 /*CHANGE HERE*/) {
-                    int index = Integer.parseInt(strings.get(i+1));
-                    Field toDoField = board.getFields().get(index);
-                    int J = index - (index%board.getWidth());
-                    Field newField = Connector.readField(board.getWidth(), (index-J)/board.getWidth(), J);
-                    if (newField.getOpen()) toDoField.open(board.getWidth(), true);
-                    if (newField.getFlag()) toDoField.setFlag(board.getWidth(), !toDoField.getFlag());
-                }
-            }
-        }
-
         //grid
-        g.setStroke(defaultStroke);
+        g.setStroke(stroke);
         g.setColor(Colors.BORDER);
-        for (int i = 0; i < board.getWidth()+1; i++) {
-            double x = i*scale+xoff;
-            line.setLine(x, yoff, x, yoff+board.getHeight()*scale);
+        for (int x = 0; x < board.getWidth()+1; x++) {
+            double X = x * scale + xOff;
+            line.setLine(X, yOff, X, yOff + board.getHeight() * scale);
             g.draw(line);
         }
-        for (int j = 0; j < board.getHeight()+1; j++) {
-            double y = j*scale+yoff;
-            line.setLine(xoff, y, xoff+board.getWidth()*scale, y);
+        for (int y = 0; y < board.getHeight()+1; y++) {
+            double Y = y * scale + yOff;
+            line.setLine(xOff, Y, xOff + board.getWidth() * scale, Y);
             g.draw(line);
         }
     }
+
 }
