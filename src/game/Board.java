@@ -9,7 +9,8 @@ public class Board {
 
     private int width, height, mines;
     private ArrayList<Field> fields = new ArrayList<>();
-    protected Connection con;
+    public Connection con;
+
     public void init(int width, int height, int mines) {
         this.width = width;
         this.height = height;

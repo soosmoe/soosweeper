@@ -46,22 +46,23 @@ public class Render {
 
         previousMouseX = GUI.mouseX;
         previousMouseY = GUI.mouseY;
-        if(GUI.mousePressed)board.createNewGame();
+        if(GUI.mousePressed&&board.con.getGameState()==1)board.createNewGame();
     }
-    private boolean finished(){
+    private void finished(){
         for(Field f:board.getFields()) {
-            if(f.getOpen()==false&&f.getFlag()==false)return false;
-            if(f.getFlag()&&f.getMine()==false)return false;
+            if(f.getOpen()==false&&f.getFlag()==false){
+                return;
+            }
+            if(f.getFlag()&&f.getMine()==false) {
+                return;
+            }
         }
-        return true;
+        board.con.setGameState(1);
     }
     public void board(Graphics2D g) {
         //Use mouse coordinates to find hover field
         board.load();
-        if(finished()) {
-            System.out.println("win");
-            board.createNewGame();
-        }
+        finished();
 
         Field hoverField = null;
         for (int x = 0; x < board.getWidth(); x++) for (int y = 0; y < board.getHeight(); y++) {
