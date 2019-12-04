@@ -13,10 +13,27 @@ public class Field {
         this.y = y;
     }
 
+    public Field(int x, int y, boolean mine, boolean open, boolean flag, Board board) {
+        this.x = x;
+        this.y = y;
+        this.mine = mine;
+        this.open = open;
+        this.flag = flag;
+        this.board = board;
+        if(open) {
+            int count = 0;
+            for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) {
+                Field field = board.getField(x+i, y+j);
+                if (field != null && field.getMine()) count++;
+            }
+            this.mines = count;
+        }
+    }
+
     public void open() {
         if (open) return;
         open = true;
-
+        board.con.saveToDB(this);
         //Calculate number of surrounding mines
         int count = 0;
         for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) {
@@ -24,6 +41,7 @@ public class Field {
             if (field != null && field.getMine()) count++;
         }
         mines = count;
+
 
         //Open surrounding fields if possible
         if (mines == 0) {
@@ -66,6 +84,7 @@ public class Field {
 
     public void setFlag(boolean flag) {
         this.flag = flag;
+        board.con.saveToDB(this);
     }
 
     public int getMines() {

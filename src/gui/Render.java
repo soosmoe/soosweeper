@@ -152,6 +152,7 @@ public class Render {
             line.setLine(xOff, Y, xOff + board.getWidth() * scale, Y);
             g.draw(line);
         }
+        board.load();
     }
 
 }

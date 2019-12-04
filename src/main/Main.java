@@ -1,5 +1,6 @@
 package main;
 
+import Connection.Connection;
 import gui.Panel;
 
 import javax.swing.*;
@@ -8,7 +9,6 @@ import java.awt.*;
 public class Main {
 
     private static Panel panel;
-
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {

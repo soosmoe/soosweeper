@@ -1,5 +1,6 @@
 package game;
 
+import Connection.Connection;
 import util.Maths;
 
 import java.util.ArrayList;
@@ -8,16 +9,18 @@ public class Board {
 
     private int width, height, mines;
     private ArrayList<Field> fields = new ArrayList<>();
-
+    protected Connection con;
     public void init(int width, int height, int mines) {
         this.width = width;
         this.height = height;
         this.mines = mines;
-
+        this.con = new Connection();
         //Prepare fields
         fields.clear();
+        con.clear();
         for (int y = 0; y < height; y++) for (int x = 0; x < width; x++) {
             fields.add(new Field(this, x, y));
+            con.saveInit(fields.get(fields.size()-1));
         }
 
         //Distribute mines on board at random
@@ -28,7 +31,17 @@ public class Board {
             int index = indices.get(random);
             fields.get(index).setMine(true);
             indices.remove(random);
+            con.setMine(fields.get(index));
         }
+
+    }
+
+    public void save() {
+        //con.saveToDB(fields);
+    }
+
+    public void load() {
+        this.fields = con.getFromDB(this);
     }
 
     public int getWidth() {
