@@ -50,10 +50,10 @@ public class Render {
     }
     private void finished(){
         for(Field f:board.getFields()) {
-            if(f.getOpen()==false&&f.getFlag()==false){
+            if(!f.getOpen() && !f.getFlag()){
                 return;
             }
-            if(f.getFlag()&&f.getMine()==false) {
+            if(f.getFlag()&& !f.getMine()) {
                 return;
             }
         }
