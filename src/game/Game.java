@@ -11,7 +11,7 @@ public class Game {
 
     public Game() {
         board = new Board();
-        board.init(100, 100, 200);
+        board.init(10, 10, 10);
         render = new Render(board);
     }
 
