@@ -28,7 +28,6 @@ public class Frame extends JFrame {
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
             }
 
             @Override

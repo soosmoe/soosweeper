@@ -22,10 +22,31 @@ public class Connection {
         }
     }
 
+    public int getGameState() {
+        try {
+            Statement stmt = con.createStatement();
+            System.out.println("select GameInProcess from db38937.Running");
+            ResultSet rs = stmt.executeQuery("select GameInProcess from db38937.Running");
+            rs.next();
+            return rs.getInt(1);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return 2;
+    }
+    public void setGameState(int state) {
+        try {
+            Statement stmt = con.createStatement();
+            stmt.execute("update db38937.Running set GameInProcess = '" + state + "'");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
     public void clear() {
         try {
             Statement stmt = con.createStatement();
-            System.out.println("delete from db38937.Field");
+            //System.out.println("delete from db38937.Field");
             stmt.execute("delete from db38937.Field");
         } catch (Exception e) {
             System.out.println(e);
@@ -35,7 +56,7 @@ public class Connection {
     public void saveToDB(Field f) {
         try {
             Statement stmt = con.createStatement();
-            System.out.println("update db38937.Field set Offen = " + (f.getOpen()? 1:0) + ", Flag = " + (f.getFlag()? 1:0) + " where X = " + f.getX() + " and Y = " + f.getY());
+            //System.out.println("update db38937.Field set Offen = " + (f.getOpen()? 1:0) + ", Flag = " + (f.getFlag()? 1:0) + " where X = " + f.getX() + " and Y = " + f.getY());
             stmt.execute("update db38937.Field set Offen = " + (f.getOpen()? 1:0) + ", Flag = " + (f.getFlag()? 1:0) + " where X = " + f.getX() + " and Y = " + f.getY());
         } catch (Exception e) {
             System.out.println(e);
@@ -46,7 +67,7 @@ public class Connection {
         try {
             Statement stmt = con.createStatement();
 
-            System.out.println("insert into db38937.Field (X, Y, Mine, Offen, Flag) values (" + f.getX() + ", "  + f.getY() + ", 0, 0, 0)");
+            //System.out.println("insert into db38937.Field (X, Y, Mine, Offen, Flag) values (" + f.getX() + ", "  + f.getY() + ", 0, 0, 0)");
             stmt.execute("insert into db38937.Field (X, Y, Mine, Offen, Flag) values (" + f.getX() + ", "  + f.getY() + ", 0, 0, 0)");
         } catch (Exception e) {
             System.out.println(e);

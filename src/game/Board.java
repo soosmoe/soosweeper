@@ -16,7 +16,23 @@ public class Board {
         this.mines = mines;
         this.con = new Connection();
         //Prepare fields
-        /*
+        System.out.println("a");
+        System.out.print(con.getGameState());
+        switch(con.getGameState()) {
+            case 0:
+                load();
+                break;
+            case 1:
+                createNewGame();
+                break;
+            case 2:
+                init(width, height, mines);
+                break;
+        }
+    }
+
+    public void createNewGame() {
+        con.setGameState(2);
         fields.clear();
         con.clear();
         for (int y = 0; y < height; y++) for (int x = 0; x < width; x++) {
@@ -33,9 +49,8 @@ public class Board {
             fields.get(index).setMine(true);
             indices.remove(random);
             con.setMine(fields.get(index));
-        }*/
-        load();
-
+        }
+        con.setGameState(0);
     }
 
     public void save() {
@@ -62,7 +77,13 @@ public class Board {
         return fields.get(index);
     }
 
+    public ArrayList<Field> getFields() {
+        return fields;
+    }
+
     public Field getField(int x, int y) {
+        if(x<0||y<0) return null;
+        if(x>=width||y>=height)return null;
         int index = y * width + x;
         if (index >= width * height || index < 0||index >= fields.size()) return null;
         return fields.get(index);

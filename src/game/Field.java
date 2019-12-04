@@ -31,8 +31,9 @@ public class Field {
     }
 
     public void open() {
-        if (open) return;
+        if (open||flag) return;
         open = true;
+        if(mine)board.con.setGameState(1);
         board.con.saveToDB(this);
         //Calculate number of surrounding mines
         int count = 0;
@@ -46,7 +47,7 @@ public class Field {
         //Open surrounding fields if possible
         if (mines == 0) {
             for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) {
-                Field field = board.getField(x+i, y+j);
+                Field field = board.getField(x + i, y + j);
                 if (field != null && !field.getMine() && !field.getOpen()) {
                     field.open();
                 }

@@ -46,10 +46,23 @@ public class Render {
 
         previousMouseX = GUI.mouseX;
         previousMouseY = GUI.mouseY;
+        if(GUI.mousePressed)board.createNewGame();
     }
-
+    private boolean finished(){
+        for(Field f:board.getFields()) {
+            if(f.getOpen()==false&&f.getFlag()==false)return false;
+            if(f.getFlag()&&f.getMine()==false)return false;
+        }
+        return true;
+    }
     public void board(Graphics2D g) {
         //Use mouse coordinates to find hover field
+        board.load();
+        if(finished()) {
+            System.out.println("win");
+            board.createNewGame();
+        }
+
         Field hoverField = null;
         for (int x = 0; x < board.getWidth(); x++) for (int y = 0; y < board.getHeight(); y++) {
             double X = x * scale + xOff;
@@ -152,7 +165,7 @@ public class Render {
             line.setLine(xOff, Y, xOff + board.getWidth() * scale, Y);
             g.draw(line);
         }
-        board.load();
+
     }
 
 }
